@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - RESTAURANT NAME</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #f0f2f5;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Login Section -->
+    <div id="login-section" class="login-container">
+        <div class="login-card">
+            <h2 class="section-title">Admin Login</h2>
+            <form id="login-form">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="email" class="form-input" required placeholder="admin@restaurant.com">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="password" class="form-input" required placeholder="********">
+                </div>
+                <button type="submit" class="place-order-btn">Login</button>
+            </form>
+            <p id="login-error" style="color: red; margin-top: 10px; font-size: 0.9rem;"></p>
+        </div>
+    </div>
+
+    <!-- Dashboard Section -->
+    <div id="dashboard-section" class="admin-dashboard hidden">
+        <div class="admin-header">
+            <h3>🍽️ Admin Dashboard</h3>
+            <button id="logout-btn" class="add-btn" style="border-color: #cc0000; color: #cc0000;">Logout</button>
+        </div>
+
+        <!-- Add Category -->
+        <div class="dashboard-card">
+            <h4 class="section-title">Add Category</h4>
+            <div style="display: flex; gap: 10px;">
+                <input type="text" id="cat-name" class="form-input" placeholder="Category Name" style="flex: 2;">
+                <input type="text" id="cat-emoji" class="form-input" placeholder="Emoji" style="flex: 1;">
+                <button onclick="addCategory()" class="add-btn">Add</button>
+            </div>
+            <div id="category-list" style="margin-top: 15px; display: flex; gap: 10px; flex-wrap: wrap;">
+                <!-- Categories injected here -->
+            </div>
+        </div>
+
+        <!-- Add Item -->
+        <div class="dashboard-card">
+            <h4 class="section-title">Add Menu Item</h4>
+            <form id="add-item-form">
+                <div class="form-group">
+                    <label>Item Name</label>
+                    <input type="text" id="item-name" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="item-desc" class="form-textarea" rows="2" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Image URL</label>
+                    <input type="url" id="item-image" class="form-input" placeholder="https://..." required>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <div class="form-group" style="flex: 1;">
+                        <label>Price (₹)</label>
+                        <input type="number" id="item-price" class="form-input" required>
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label>Category</label>
+                        <select id="item-category" class="form-input" required>
+                            <!-- Options injected here -->
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group" style="display: flex; align-items: center; gap: 10px;">
+                    <label style="margin: 0;">Is Veg?</label>
+                    <input type="checkbox" id="item-veg" style="width: 20px; height: 20px;">
+                </div>
+                <button type="submit" class="place-order-btn">Add Item</button>
+            </form>
+        </div>
+
+        <!-- Item List -->
+        <div class="dashboard-card">
+            <h4 class="section-title">Menu Items</h4>
+            <div id="item-list-container" style="display: flex; flex-direction: column; gap: 15px;">
+                <!-- Items injected here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="admin.js"></script>
+</body>
+
+</html>

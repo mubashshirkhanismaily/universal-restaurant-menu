@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>🍽️ RESTAURANT NAME</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+
+    <!-- 1️⃣ Sticky Header -->
+    <header>
+        <div class="brand-name">🍽️ RESTAURANT NAME</div>
+        <div class="cart-icon-wrapper" onclick="toggleCart()">
+            <i class="fas fa-shopping-bag"></i>
+            <span class="cart-badge" id="cart-count">0</span>
+        </div>
+    </header>
+
+    <!-- 2️⃣ Hero Carousel -->
+    <div class="hero-carousel">
+        <div class="carousel-track" id="carousel-track">
+            <!-- Slides injected by JS or static -->
+            <div class="carousel-slide">
+                <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&q=80"
+                    alt="Restaurant Interior">
+            </div>
+            <div class="carousel-slide">
+                <img src="https://images.unsplash.com/photo-1552566626-52f8b828add9?w=800&q=80" alt="Delicious Food">
+            </div>
+            <div class="carousel-slide">
+                <img src="https://images.unsplash.com/photo-1559339352-11d035aa65de?w=800&q=80" alt="Premium Dining">
+            </div>
+        </div>
+        <div class="carousel-indicators" id="carousel-indicators">
+            <div class="dot active" onclick="goToSlide(0)"></div>
+            <div class="dot" onclick="goToSlide(1)"></div>
+            <div class="dot" onclick="goToSlide(2)"></div>
+        </div>
+    </div>
+
+    <!-- 3️⃣ Category Tabs -->
+    <!-- 3️⃣ Category Tabs -->
+    <div class="category-tabs" id="category-tabs">
+        <!-- Tabs injected by JS -->
+        <div class="tab active" data-id="all">🔥 All</div>
+    </div>
+
+    <!-- 4️⃣ Menu Cards -->
+    <div class="menu-grid" id="menu-grid">
+        <!-- Menu items injected by JS -->
+        <div class="loading-spinner" style="text-align: center; padding: 20px;">
+            <i class="fas fa-spinner fa-spin fa-2x" style="color: var(--primary-color);"></i>
+        </div>
+    </div>
+
+    <!-- 5️⃣ Floating View Order Button -->
+    <div class="floating-cart-btn" id="floating-cart-btn" onclick="toggleCart()">
+        <span><i class="fas fa-shopping-cart"></i> View Order</span>
+        <span id="floating-total">₹0</span>
+    </div>
+
+    <!-- 6️⃣ Slide-Up Cart Drawer -->
+    <div class="cart-overlay" id="cart-overlay" onclick="toggleCart()"></div>
+    <div class="cart-drawer" id="cart-drawer">
+        <div class="cart-header">
+            <div class="cart-title">Your Order</div>
+            <button class="close-cart" onclick="toggleCart()"><i class="fas fa-times"></i></button>
+        </div>
+
+        <div class="drawer-content">
+            <div class="cart-body" id="cart-body">
+                <!-- Cart items injected here -->
+                <div style="text-align: center; color: #999; margin-top: 50px;">
+                    <i class="fas fa-shopping-basket fa-3x" style="margin-bottom: 10px; opacity: 0.5;"></i>
+                    <p>Your cart is empty</p>
+                </div>
+            </div>
+
+            <div class="checkout-form">
+                <div class="bill-section">
+                    <div class="bill-row">
+                        <span>Subtotal</span>
+                        <span id="bill-subtotal">₹0</span>
+                    </div>
+                    <div class="bill-row">
+                        <span>GST (5%)</span>
+                        <span id="bill-gst">₹0</span>
+                    </div>
+                    <div class="bill-row total">
+                        <span>Grand Total</span>
+                        <span id="bill-total">₹0</span>
+                    </div>
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <div class="form-group">
+                        <label>Your Name <span style="color: red">*</span></label>
+                        <input type="text" class="form-input" id="customer-name" placeholder="John Doe">
+                    </div>
+                    <div class="form-group">
+                        <label>Phone Number <span style="color: red">*</span></label>
+                        <input type="tel" class="form-input" id="customer-phone" placeholder="9876543210">
+                    </div>
+                    <div class="form-group">
+                        <label>Table Number <span style="color: red">*</span></label>
+                        <div class="table-selector" id="table-selector">
+                            <!-- Generated by JS 1-10 -->
+                        </div>
+                        <input type="hidden" id="selected-table">
+                    </div>
+                    <div class="form-group">
+                        <label>Special Instructions</label>
+                        <textarea class="form-textarea" id="order-notes" rows="2"
+                            placeholder="Less spicy, extra onions..."></textarea>
+                    </div>
+
+                    <button class="place-order-btn" onclick="placeOrder()">
+                        Place Order on WhatsApp <i class="fab fa-whatsapp"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer style="text-align: center; padding: 20px; color: #888; font-size: 0.8rem; margin-bottom: 80px;">
+        <p>&copy; 2024 RESTAURANT NAME</p>
+        <a href="admin.html" style="color: #ccc; text-decoration: none;">Admin Login</a>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>
