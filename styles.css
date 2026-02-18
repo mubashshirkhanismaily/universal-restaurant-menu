@@ -34,25 +34,49 @@ body {
     /* Space for floating button */
 }
 
-/* 1️⃣ Sticky Header */
+/* 1️⃣ Sticky Header - Wavy Curve Design */
+/* 1️⃣ Sticky Header - Wavy Curve Design */
 header {
     position: sticky;
     top: 0;
     z-index: 100;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
+    background: white;
+    /* Solid white for the main block */
     padding: 15px 20px;
+    /* Restored normal padding */
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+    filter: drop-shadow(0 4px 5px rgba(0, 0, 0, 0.05));
+    /* Shadow follows the shape */
+    margin-bottom: 25px;
+    /* Push content down */
+    border-bottom: none;
+    /* Ensure no border */
 }
 
-.brand-name {
-    font-weight: 700;
-    font-size: 1.2rem;
-    color: var(--primary-color);
-    letter-spacing: 0.5px;
+/* The Wavy Bottom Extension */
+header::after {
+    content: "";
+    position: absolute;
+    bottom: -20px;
+    /* Height of the wave */
+    left: 0;
+    width: 100%;
+    height: 20px;
+    background-color: transparent;
+    /* Smooth Sine Wave SVG */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320' preserveAspectRatio='none'%3E%3Cpath fill='white' fill-opacity='1' d='M0,96L80,106.7C160,117,320,139,480,133.3C640,128,800,96,960,85.3C1120,75,1280,85,1360,90.7L1440,96L1440,0L1360,0C1280,0,1120,0,960,0C800,0,640,0,480,0C320,0,160,0,80,0L0,0Z'%3E%3C/path%3E%3C/svg%3E");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    z-index: -1;
+}
+
+.brand-logo {
+    height: 28px;
+    /* Reduced specific size as requested */
+    width: auto;
+    object-fit: contain;
 }
 
 .cart-icon-wrapper {
@@ -80,13 +104,19 @@ header {
 }
 
 /* 2️⃣ Hero Carousel */
+/* 2️⃣ Hero Carousel */
 .hero-carousel {
-    margin: 20px;
+    width: calc(100% - 30px);
+    margin: 15px auto;
+    /* Centers the element perfectly */
+    aspect-ratio: 2/1;
+    /* More wide-screen ratio */
+    max-height: 180px;
+    /* Reduced specific height limit */
     border-radius: var(--border-radius-md);
     overflow: hidden;
     position: relative;
     box-shadow: var(--shadow-soft);
-    height: 200px;
 }
 
 .carousel-track {
@@ -135,7 +165,8 @@ header {
     overflow-x: auto;
     gap: 12px;
     padding: 10px 20px;
-    margin: 10px 0 15px 0;
+    margin: 10px 20px 15px 20px;
+    /* Added left/right margin */
     /* Added spacing */
     scrollbar-width: none;
     scroll-snap-type: x mandatory;
@@ -169,9 +200,20 @@ header {
     transform: translateY(-2px);
 }
 
+/* 4️⃣ Section Divider */
+hr {
+    border: none;
+    height: 2px;
+    background: linear-gradient(to right, transparent, var(--primary-color), transparent);
+    opacity: 0.2;
+    margin: 10px 20px;
+    border-radius: 2px;
+}
+
 /* 4️⃣ Menu Cards */
 .menu-grid {
-    padding: 20px;
+    padding: 10px 20px 20px 20px;
+    /* Reduced top padding as divider adds space */
     display: flex;
     flex-direction: column;
     gap: 20px;
