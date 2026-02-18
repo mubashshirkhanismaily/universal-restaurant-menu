@@ -286,16 +286,21 @@ hr {
 }
 
 .veg-badge {
-    position: absolute;
-    top: 15px;
-    right: 15px;
+    /* Position relative in flow to avoid overlap */
     width: 16px;
     height: 16px;
+    min-width: 16px;
+    /* Prevent squishing */
     border: 2px solid var(--veg-green);
     display: flex;
     justify-content: center;
     align-items: center;
     border-radius: 4px;
+    margin-left: 8px;
+    /* Spacing from text */
+    flex-shrink: 0;
+    margin-top: 4px;
+    /* Align visual center with text line */
 }
 
 .veg-dot {
