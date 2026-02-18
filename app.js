@@ -9,6 +9,46 @@ const WHATSAPP_NUMBER = '7666885770'; // Format: 919876543210
 // Initialize Supabase
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+// Images: retry a few times, then fallback
+const IMAGE_RETRY_LIMIT = 4;
+const FALLBACK_IMAGE_DATA_URI =
+    "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240' viewBox='0 0 240 240'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%23f3f4f6'/%3E%3Cstop offset='100%25' stop-color='%23e5e7eb'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='240' height='240' rx='18' fill='url(%23g)'/%3E%3Cpath d='M70 145l25-28 22 25 18-20 35 40H70z' fill='%23cbd5e1'/%3E%3Ccircle cx='95' cy='90' r='12' fill='%23cbd5e1'/%3E%3Ctext x='50%25' y='78%25' text-anchor='middle' font-family='Poppins, Arial, sans-serif' font-size='14' fill='%2394a3b8'%3ENo image%3C/text%3E%3C/svg%3E";
+
+function retryImage(imgEl) {
+    if (!imgEl) return;
+
+    const originalRaw = imgEl.dataset.originalSrc || imgEl.getAttribute('src') || '';
+    const original = String(originalRaw || '').trim();
+    if (!imgEl.dataset.originalSrc) imgEl.dataset.originalSrc = original;
+
+    const attempts = Number(imgEl.dataset.retryAttempts || '0');
+    if (!Number.isFinite(attempts)) imgEl.dataset.retryAttempts = '0';
+
+    if (!original || original === 'undefined' || original === 'null') {
+        imgEl.onerror = null;
+        imgEl.src = FALLBACK_IMAGE_DATA_URI;
+        return;
+    }
+
+    if (attempts >= IMAGE_RETRY_LIMIT) {
+        imgEl.onerror = null;
+        imgEl.src = FALLBACK_IMAGE_DATA_URI;
+        return;
+    }
+
+    const nextAttempts = attempts + 1;
+    imgEl.dataset.retryAttempts = String(nextAttempts);
+
+    const sep = original.includes('?') ? '&' : '?';
+    imgEl.src = `${original}${sep}img_retry=${nextAttempts}&t=${Date.now()}`;
+}
+
+function getInitialImageSrc(imageValue) {
+    const s = String(imageValue || '').trim();
+    if (!s || s === 'undefined' || s === 'null') return { src: FALLBACK_IMAGE_DATA_URI, original: '' };
+    return { src: s, original: s };
+}
+
 // State
 let categories = [];
 let menuItems = [];
@@ -109,7 +149,7 @@ function renderMenuGrid(items) {
         const card = document.createElement('div');
         card.className = 'menu-card';
         card.innerHTML = `
-            <img src="${item.image}" alt="${item.name}" class="menu-image" loading="lazy">
+            <img src="" alt="${item.name}" class="menu-image" loading="lazy" decoding="async">
             <div class="menu-content">
                 <div class="menu-header">
                     <div>
@@ -126,6 +166,14 @@ function renderMenuGrid(items) {
                 </div>
             </div>
         `;
+        const img = card.querySelector('img.menu-image');
+        if (img) {
+            const { src, original } = getInitialImageSrc(item.image);
+            if (original) img.dataset.originalSrc = original;
+            img.dataset.retryAttempts = '0';
+            img.addEventListener('error', () => retryImage(img));
+            img.src = src;
+        }
         menuGrid.appendChild(card);
     });
 }

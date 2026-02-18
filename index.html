@@ -16,11 +16,15 @@
 <body>
 
     <!-- 1️⃣ Sticky Header -->
-    <header>
-        <img src="logo.svg" alt="Aulie Bless Logo" class="brand-logo">
-        <div class="cart-icon-wrapper" onclick="toggleCart()">
-            <i class="fas fa-shopping-bag"></i>
-            <span class="cart-badge" id="cart-count">0</span>
+    <header class="top-nav">
+        <div class="nav-brand">
+            <img src="logo.svg" alt="Aulie Bless Logo" class="brand-logo">
+        </div>
+        <div class="nav-actions">
+            <button type="button" class="nav-icon-btn cart-icon-wrapper" onclick="toggleCart()" aria-label="Open cart">
+                <i class="fas fa-shopping-bag"></i>
+                <span class="cart-badge" id="cart-count">0</span>
+            </button>
         </div>
     </header>
 

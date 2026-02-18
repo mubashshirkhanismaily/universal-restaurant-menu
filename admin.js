@@ -17,6 +17,57 @@ const itemCategorySelect = document.getElementById('item-category');
 const addItemForm = document.getElementById('add-item-form');
 const itemListContainer = document.getElementById('item-list-container');
 
+// Edit modal elements
+const editItemModal = document.getElementById('edit-item-modal');
+const editItemForm = document.getElementById('edit-item-form');
+const editItemError = document.getElementById('edit-item-error');
+const editItemCloseBtn = document.getElementById('edit-item-close-btn');
+const editItemCancelBtn = document.getElementById('edit-item-cancel-btn');
+const editItemCategorySelect = document.getElementById('edit-item-category');
+
+let itemsById = {};
+let categoriesCache = [];
+
+// Images: retry a few times, then fallback
+const IMAGE_RETRY_LIMIT = 4;
+const FALLBACK_IMAGE_DATA_URI =
+    "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240' viewBox='0 0 240 240'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%23f3f4f6'/%3E%3Cstop offset='100%25' stop-color='%23e5e7eb'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='240' height='240' rx='18' fill='url(%23g)'/%3E%3Cpath d='M70 145l25-28 22 25 18-20 35 40H70z' fill='%23cbd5e1'/%3E%3Ccircle cx='95' cy='90' r='12' fill='%23cbd5e1'/%3E%3Ctext x='50%25' y='78%25' text-anchor='middle' font-family='Poppins, Arial, sans-serif' font-size='14' fill='%2394a3b8'%3ENo image%3C/text%3E%3C/svg%3E";
+
+function retryImage(imgEl) {
+    if (!imgEl) return;
+
+    const originalRaw = imgEl.dataset.originalSrc || imgEl.getAttribute('src') || '';
+    const original = String(originalRaw || '').trim();
+    if (!imgEl.dataset.originalSrc) imgEl.dataset.originalSrc = original;
+
+    const attempts = Number(imgEl.dataset.retryAttempts || '0');
+    if (!Number.isFinite(attempts)) imgEl.dataset.retryAttempts = '0';
+
+    if (!original || original === 'undefined' || original === 'null') {
+        imgEl.onerror = null;
+        imgEl.src = FALLBACK_IMAGE_DATA_URI;
+        return;
+    }
+
+    if (attempts >= IMAGE_RETRY_LIMIT) {
+        imgEl.onerror = null;
+        imgEl.src = FALLBACK_IMAGE_DATA_URI;
+        return;
+    }
+
+    const nextAttempts = attempts + 1;
+    imgEl.dataset.retryAttempts = String(nextAttempts);
+
+    const sep = original.includes('?') ? '&' : '?';
+    imgEl.src = `${original}${sep}img_retry=${nextAttempts}&t=${Date.now()}`;
+}
+
+function getInitialImageSrc(imageValue) {
+    const s = String(imageValue || '').trim();
+    if (!s || s === 'undefined' || s === 'null') return { src: FALLBACK_IMAGE_DATA_URI, original: '' };
+    return { src: s, original: s };
+}
+
 // 🔒 Auth Check
 async function checkAuth() {
     const { data: { user } } = await supabaseClient.auth.getUser();
@@ -83,6 +134,7 @@ async function fetchCategories() {
         return;
     }
 
+    categoriesCache = data ?? [];
     renderCategories(data);
     updateCategoryDropdown(data);
 }
@@ -105,6 +157,16 @@ function updateCategoryDropdown(categories) {
         option.textContent = `${cat.emoji} ${cat.name}`;
         itemCategorySelect.appendChild(option);
     });
+
+    if (editItemCategorySelect) {
+        editItemCategorySelect.innerHTML = '<option value="">Select Category</option>';
+        categories.forEach(cat => {
+            const option = document.createElement('option');
+            option.value = cat.id;
+            option.textContent = `${cat.emoji} ${cat.name}`;
+            editItemCategorySelect.appendChild(option);
+        });
+    }
 }
 
 async function addCategory() {
@@ -154,6 +216,7 @@ async function fetchItems() {
         return;
     }
 
+    itemsById = Object.fromEntries((data ?? []).map(i => [i.id, i]));
     renderItems(data);
 }
 
@@ -163,7 +226,7 @@ function renderItems(items) {
         const itemCard = document.createElement('div');
         itemCard.className = 'menu-card';
         itemCard.innerHTML = `
-            <img src="${item.image}" class="menu-image" alt="${item.name}">
+            <img src="" class="menu-image" alt="${item.name}" loading="lazy" decoding="async">
             <div class="menu-content">
                 <div class="menu-header">
                     <h4 class="item-name">${item.name}</h4>
@@ -172,13 +235,92 @@ function renderItems(items) {
                 <p class="item-desc">${item.description}</p>
                 <div class="menu-footer">
                     <span class="item-price">₹${item.price}</span>
-                    <button class="delete-btn" onclick="deleteItem('${item.id}')">Delete</button>
+                    <div style="display:flex; gap:8px; align-items:center;">
+                        <button class="edit-btn" onclick="openEditItem('${item.id}')">Edit</button>
+                        <button class="delete-btn" onclick="deleteItem('${item.id}')">Delete</button>
+                    </div>
                 </div>
             </div>
         `;
+        const img = itemCard.querySelector('img.menu-image');
+        if (img) {
+            const { src, original } = getInitialImageSrc(item.image);
+            if (original) img.dataset.originalSrc = original;
+            img.dataset.retryAttempts = '0';
+            img.addEventListener('error', () => retryImage(img));
+            img.src = src;
+        }
         itemListContainer.appendChild(itemCard);
     });
 }
+
+function openEditItem(id) {
+    const item = itemsById[id];
+    if (!item) return alert('Item not found. Please refresh.');
+
+    editItemError.innerText = '';
+
+    document.getElementById('edit-item-id').value = item.id;
+    document.getElementById('edit-item-name').value = item.name ?? '';
+    document.getElementById('edit-item-desc').value = item.description ?? '';
+    document.getElementById('edit-item-image').value = item.image ?? '';
+    document.getElementById('edit-item-price').value = item.price ?? '';
+    document.getElementById('edit-item-category').value = item.category_id ?? '';
+    document.getElementById('edit-item-veg').checked = !!item.is_veg;
+
+    editItemModal.classList.remove('hidden');
+}
+
+function closeEditModal() {
+    editItemModal.classList.add('hidden');
+    editItemForm.reset();
+    editItemError.innerText = '';
+}
+
+editItemCloseBtn?.addEventListener('click', closeEditModal);
+editItemCancelBtn?.addEventListener('click', closeEditModal);
+editItemModal?.addEventListener('click', (e) => {
+    if (e.target === editItemModal) closeEditModal();
+});
+
+editItemForm?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    editItemError.innerText = '';
+
+    const id = document.getElementById('edit-item-id').value;
+    const name = document.getElementById('edit-item-name').value.trim();
+    const description = document.getElementById('edit-item-desc').value.trim();
+    const image = document.getElementById('edit-item-image').value.trim();
+    const priceRaw = document.getElementById('edit-item-price').value;
+    const category_id = document.getElementById('edit-item-category').value;
+    const is_veg = document.getElementById('edit-item-veg').checked;
+
+    if (!id) return;
+    if (!category_id) {
+        editItemError.innerText = 'Please select a category.';
+        return;
+    }
+
+    const price = Number(priceRaw);
+    if (!Number.isFinite(price) || price < 0) {
+        editItemError.innerText = 'Please enter a valid price.';
+        return;
+    }
+
+    try {
+        const { error } = await supabaseClient
+            .from('items')
+            .update({ name, description, image, price, category_id, is_veg })
+            .eq('id', id);
+
+        if (error) throw error;
+
+        closeEditModal();
+        await fetchItems();
+    } catch (err) {
+        editItemError.innerText = err?.message || 'Failed to update item.';
+    }
+});
 
 addItemForm.addEventListener('submit', async (e) => {
     e.preventDefault();

@@ -41,56 +41,88 @@ header {
     top: 0;
     z-index: 100;
     background: white;
-    /* Solid white for the main block */
-    padding: 15px 20px;
-    /* Restored normal padding */
+    padding: 10px 16px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    filter: drop-shadow(0 4px 5px rgba(0, 0, 0, 0.05));
-    /* Shadow follows the shape */
-    margin-bottom: 25px;
-    /* Push content down */
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    margin-bottom: 14px;
     border-bottom: none;
-    /* Ensure no border */
+    border-bottom: 2px solid var(--primary-color);
 }
 
-/* The Wavy Bottom Extension */
+/* Premium bottom accent */
 header::after {
     content: "";
     position: absolute;
-    bottom: -20px;
-    /* Height of the wave */
     left: 0;
+    bottom: -2px;
     width: 100%;
-    height: 20px;
-    background-color: transparent;
-    /* Smooth Sine Wave SVG */
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320' preserveAspectRatio='none'%3E%3Cpath fill='white' fill-opacity='1' d='M0,96L80,106.7C160,117,320,139,480,133.3C640,128,800,96,960,85.3C1120,75,1280,85,1360,90.7L1440,96L1440,0L1360,0C1280,0,1120,0,960,0C800,0,640,0,480,0C320,0,160,0,80,0L0,0Z'%3E%3C/path%3E%3C/svg%3E");
-    background-size: 100% 100%;
-    background-repeat: no-repeat;
-    z-index: -1;
+    height: 2px;
+    background: linear-gradient(90deg,
+            rgba(218, 165, 32, 0) 0%,
+            rgba(218, 165, 32, 0.9) 50%,
+            rgba(218, 165, 32, 0) 100%);
+    filter: blur(0.1px);
+    pointer-events: none;
+}
+
+.top-nav {
+    position: sticky;
+}
+
+.nav-icon-btn {
+    appearance: none;
+    border: none;
+    padding: 0;
+    background: transparent;
+    font: inherit;
+}
+
+.nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 
 .brand-logo {
-    height: 28px;
+    height: 34px;
     /* Reduced specific size as requested */
     width: auto;
     object-fit: contain;
+    display: block;
 }
 
 .cart-icon-wrapper {
     position: relative;
     cursor: pointer;
-    font-size: 1.2rem;
-    color: var(--text-dark);
+    font-size: 1rem;
+    color: white;
+    background: var(--primary-color);
+    width: 40px;
+    height: 40px;
+    border-radius: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 18px var(--primary-shadow);
+    transition: var(--transition);
+}
+
+.cart-icon-wrapper:active {
+    transform: scale(0.98);
+}
+
+.cart-icon-wrapper:focus-visible {
+    outline: 3px solid rgba(139, 0, 0, 0.18);
+    outline-offset: 3px;
 }
 
 .cart-badge {
     position: absolute;
-    top: -8px;
-    right: -8px;
-    background: var(--primary-color);
+    top: -6px;
+    right: -6px;
+    background: #111;
     color: white;
     font-size: 0.7rem;
     font-weight: 700;
@@ -101,6 +133,7 @@ header::after {
     justify-content: center;
     align-items: center;
     animation: bounce 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 2px solid white;
 }
 
 /* 2️⃣ Hero Carousel */
@@ -686,4 +719,60 @@ hr {
     font-size: 0.8rem;
     cursor: pointer;
     font-weight: 600;
+}
+
+.edit-btn {
+    background: #e9efff;
+    color: #1f3a8a;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+/* Admin modal */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 18px;
+    z-index: 1000;
+}
+
+.modal-card {
+    width: 100%;
+    max-width: 520px;
+    background: white;
+    border-radius: 18px;
+    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.25);
+    padding: 18px;
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.modal-close {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    border: 1px solid #eee;
+    background: #fafafa;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-close:active {
+    transform: scale(0.98);
 }
